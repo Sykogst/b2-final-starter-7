@@ -1,0 +1,9 @@
+<%= render partial: "shared/nav" %>
+
+<% @bulk_discounts.each do |discount| %>
+  <div id=<%= "discount-#{discount.id}" %>>
+    <%= link_to "#{discount.percentage}% off #{discount.quantity_threshold} items",
+                merchant_bulk_discount_path(@merchant.id, discount.id) 
+    %>
+  </div>
+<% end %>
