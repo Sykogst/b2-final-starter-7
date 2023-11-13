@@ -54,6 +54,8 @@ describe "bulk discounts index" do
     @discount_1 = BulkDiscount.create!(percentage: 10, quantity_threshold: 5, merchant_id: @merchant1.id)
     @discount_2 = BulkDiscount.create!(percentage: 20, quantity_threshold: 10, merchant_id: @merchant1.id)
     @discount_3 = BulkDiscount.create!(percentage: 10, quantity_threshold: 5, merchant_id: @merchant2.id)
+
+    visit merchant_bulk_discounts_path(@merchant1)
   end
 
   # 1: Merchant Bulk Discounts Index, part 2
@@ -64,13 +66,11 @@ describe "bulk discounts index" do
   # And each bulk discount listed includes a link to its show page
   it 'They see all bulk discounts including percentage, quantity thresholds, no discounts from other merchants' do
     within "#discount-#{@discount_1.id}" do
-      expect(page).to have_content("Discount Amount: 10%")
-      expect(page).to have_content("Threshold: 5 items")
+      expect(page).to have_content("10% off 5 items")
     end
 
     within "#discount-#{@discount_2.id}" do
-      expect(page).to have_content("Discount Amount: 20%")
-      expect(page).to have_content("Threshold: 10 items")
+      expect(page).to have_content("20% off 10 items")
     end
 
     expect(page).to_not have_css("#discount-#{@discount_3.id}")
