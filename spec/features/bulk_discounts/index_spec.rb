@@ -76,7 +76,7 @@ describe "bulk discounts index" do
     expect(page).to_not have_css("#discount-#{@discount_3.id}")
   end
 
-  it 'Each discount is a link to its show page, when clicked directs to proper location' do
+  it 'Each discount is a link to its show page, when clicked directs to proper show page' do
     within "#discount-#{@discount_1.id}" do
       expect(page).to have_link("10% off 5 items")
     end
@@ -87,6 +87,73 @@ describe "bulk discounts index" do
     end
 
     expect(current_path).to eq("/merchants/#{@merchant1.id}/bulk_discounts/#{@discount_2.id}")
+  end
+
+  # 2: Merchant Bulk Discount Create
+  # As a merchant
+  # When I visit my bulk discounts index
+  # Then I see a link to create a new discount
+  # When I click this link
+  # Then I am taken to a new page where I see a form to add a new bulk discount
+  # When I fill in the form with valid data
+  # Then I am redirected back to the bulk discount index
+  # And I see my new bulk discount listed
+  it 'There is a link to create a new discount, when clicked, directs to form page, fill in with good information and submit' do
+    expect(page).to have_link('Create New Discount')
+
+    click_link('Create New Discount')
+
+    expect(current_path).to eq("/merchants/#{@merchant1.id}/bulk_discounts/new")
+    
+    fill_in 'Percentage', with: 30
+    fill_in 'Quantity threshold', with: 20
+    click_button 'Submit'
+    
+    expect(current_path).to eq(merchant_bulk_discounts_path(@merchant1))
+    expect(page).to have_content('30% off 20 items')
+  end
+
+  it 'Create new discount, missing information before submit' do
+    click_link('Create New Discount')    
+    fill_in 'Percentage', with: 30
+    click_button 'Submit'
+    
+    expect(current_path).to eq(new_merchant_bulk_discount_path(@merchant1))
+    expect(page).to have_content("Quantity threshold can't be blank, Quantity threshold is not a number")
+  end
+
+  it 'Create new discount, sad path: non-numerical values' do
+    click_link('Create New Discount')    
+    fill_in 'Percentage', with: "30%"
+    fill_in 'Quantity threshold', with: "20a"
+
+    click_button 'Submit'
+
+    expect(current_path).to eq(new_merchant_bulk_discount_path(@merchant1))
+    expect(page).to have_content("Percentage is not a number, Quantity threshold is not a number")
+  end
+
+  it 'Create new discount, sad path: negative numbers' do
+    click_link('Create New Discount')    
+    fill_in 'Percentage', with: -30
+    fill_in 'Quantity threshold', with: -20
+
+    click_button 'Submit'
+
+    expect(current_path).to eq(new_merchant_bulk_discount_path(@merchant1))
+    expect(page).to have_content("Percentage must be greater than or equal to 0, Quantity threshold must be greater than or equal to 0")
+  end
+
+  # Percentage does not actually HAVE to be, just decided to make it a requirement for simplicity
+  it 'Create new discount, sad path: integers only' do
+    click_link('Create New Discount')    
+    fill_in 'Percentage', with: 30.5
+    fill_in 'Quantity threshold', with: 20.5
+
+    click_button 'Submit'
+
+    expect(current_path).to eq(new_merchant_bulk_discount_path(@merchant1))
+    expect(page).to have_content("Percentage must be an integer, Quantity threshold must be an integer")
   end
 
 end
