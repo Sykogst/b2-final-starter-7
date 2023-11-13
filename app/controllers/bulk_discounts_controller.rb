@@ -14,8 +14,13 @@ class BulkDiscountsController < ApplicationController
   end
 
   def create
-    BulkDiscount.create!(bulk_discount_params)
-    redirect_to merchant_bulk_discounts_path(@merchant)
+    new_discount = BulkDiscount.new(bulk_discount_params)
+    if new_discount.save
+      redirect_to merchant_bulk_discounts_path(@merchant)
+    else
+      flash.notice = "All fields must be completed, get your act together."
+      redirect_to new_merchant_bulk_discount_path(@merchant)
+    end
   end
 
   private

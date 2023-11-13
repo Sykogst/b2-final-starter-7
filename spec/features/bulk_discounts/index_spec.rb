@@ -113,4 +113,13 @@ describe "bulk discounts index" do
     expect(page).to have_content('30% off 20 items')
   end
 
+  it 'Create new discount, missing information before submit' do
+    click_link('Create New Discount')    
+    fill_in 'Percentage', with: 30
+    click_button 'Submit'
+
+    expect(current_path).to eq(new_merchant_bulk_discount_path(@merchant1))
+    expect(page).to have_content('All fields must be completed, get your act together.')
+  end
+
 end
