@@ -99,7 +99,7 @@ describe "bulk discounts index" do
   # Then I am redirected back to the bulk discount index
   # And I see my new bulk discount listed
   it 'There is a link to create a new discount, when clicked, directs to form page, fill in with good information and submit' do
-    expect(page).to have_link('Create Discount')
+    expect(page).to have_link('Create New Discount')
 
     click_link('Create New Discount')
 
@@ -112,5 +112,5 @@ describe "bulk discounts index" do
     expect(current_path).to eq(merchant_bulk_discounts_path(@merchant1))
     expect(page).to have_content('30% off 20 items')
   end
-  
+
 end
