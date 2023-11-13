@@ -76,4 +76,17 @@ describe "bulk discounts index" do
     expect(page).to_not have_css("#discount-#{@discount_3.id}")
   end
 
+  it 'Each discount is a link to its show page, when clicked directs to proper location' do
+    within "#discount-#{@discount_1.id}" do
+      expect(page).to have_link("10% off 5 items")
+    end
+
+    within "#discount-#{@discount_2.id}" do
+      expect(page).to have_link("20% off 10 items")
+      click_link("20% off 10 items")
+    end
+
+    expect(current_path).to eq("/merchants/#{@merchant1.id}/bulk_discounts/#{@discount_2.id}")
+  end
+
 end
