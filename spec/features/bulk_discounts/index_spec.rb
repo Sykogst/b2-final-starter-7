@@ -106,9 +106,9 @@ describe "bulk discounts index" do
     expect(current_path).to eq("/merchants/#{@merchant1.id}/bulk_discounts/new")
     
     fill_in 'Percentage', with: 30
-    fill_in 'Threshold', with: 20
+    fill_in 'Quantity threshold', with: 20
     click_button 'Submit'
-
+    
     expect(current_path).to eq(merchant_bulk_discounts_path(@merchant1))
     expect(page).to have_content('30% off 20 items')
   end
