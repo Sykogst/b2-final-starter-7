@@ -51,9 +51,9 @@ describe "bulk discounts index" do
     @transaction7 = Transaction.create!(credit_card_number: 203942, result: 1, invoice_id: @invoice_7.id)
     @transaction8 = Transaction.create!(credit_card_number: 203942, result: 1, invoice_id: @invoice_8.id)
 
-    @discount_1 = Discount.create!(percentage: 10, quantity_threshold: 5, merchant_id: @merchant1.id)
-    @discount_2 = Discount.create!(percentage: 20, quantity_threshold: 10, merchant_id: @merchant1.id)
-    @discount_3 = Discount.create!(percentage: 10, quantity_threshold: 5, merchant_id: @merchant2.id)
+    @discount_1 = BulkDiscount.create!(percentage: 10, quantity_threshold: 5, merchant_id: @merchant1.id)
+    @discount_2 = BulkDiscount.create!(percentage: 20, quantity_threshold: 10, merchant_id: @merchant1.id)
+    @discount_3 = BulkDiscount.create!(percentage: 10, quantity_threshold: 5, merchant_id: @merchant2.id)
   end
 
   # 1: Merchant Bulk Discounts Index, part 2
