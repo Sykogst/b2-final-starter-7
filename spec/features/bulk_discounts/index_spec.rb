@@ -117,9 +117,43 @@ describe "bulk discounts index" do
     click_link('Create New Discount')    
     fill_in 'Percentage', with: 30
     click_button 'Submit'
+    
+    expect(current_path).to eq(new_merchant_bulk_discount_path(@merchant1))
+    expect(page).to have_content("Quantity threshold can't be blank, Quantity threshold is not a number")
+  end
+
+  it 'Create new discount, sad path: non-numerical values' do
+    click_link('Create New Discount')    
+    fill_in 'Percentage', with: "30%"
+    fill_in 'Quantity threshold', with: "20a"
+
+    click_button 'Submit'
 
     expect(current_path).to eq(new_merchant_bulk_discount_path(@merchant1))
-    expect(page).to have_content('All fields must be completed, get your act together.')
+    expect(page).to have_content("Percentage is not a number, Quantity threshold is not a number")
+  end
+
+  it 'Create new discount, sad path: negative numbers' do
+    click_link('Create New Discount')    
+    fill_in 'Percentage', with: -30
+    fill_in 'Quantity threshold', with: -20
+
+    click_button 'Submit'
+
+    expect(current_path).to eq(new_merchant_bulk_discount_path(@merchant1))
+    expect(page).to have_content("Percentage must be greater than or equal to 0, Quantity threshold must be greater than or equal to 0")
+  end
+
+  # Percentage does not actually HAVE to be, just decided to make it a requirement for simplicity
+  it 'Create new discount, sad path: integers only' do
+    click_link('Create New Discount')    
+    fill_in 'Percentage', with: 30.5
+    fill_in 'Quantity threshold', with: 20.5
+
+    click_button 'Submit'
+
+    expect(current_path).to eq(new_merchant_bulk_discount_path(@merchant1))
+    expect(page).to have_content("Percentage must be an integer, Quantity threshold must be an integer")
   end
 
 end

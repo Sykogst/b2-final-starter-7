@@ -18,7 +18,7 @@ class BulkDiscountsController < ApplicationController
     if new_discount.save
       redirect_to merchant_bulk_discounts_path(@merchant)
     else
-      flash.notice = "All fields must be completed, get your act together."
+      flash[:alert] = error_message(new_discount.errors)
       redirect_to new_merchant_bulk_discount_path(@merchant)
     end
   end
