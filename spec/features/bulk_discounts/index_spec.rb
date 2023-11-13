@@ -76,7 +76,7 @@ describe "bulk discounts index" do
     expect(page).to_not have_css("#discount-#{@discount_3.id}")
   end
 
-  it 'Each discount is a link to its show page, when clicked directs to proper location' do
+  it 'Each discount is a link to its show page, when clicked directs to proper show page' do
     within "#discount-#{@discount_1.id}" do
       expect(page).to have_link("10% off 5 items")
     end
@@ -89,4 +89,28 @@ describe "bulk discounts index" do
     expect(current_path).to eq("/merchants/#{@merchant1.id}/bulk_discounts/#{@discount_2.id}")
   end
 
+  # 2: Merchant Bulk Discount Create
+  # As a merchant
+  # When I visit my bulk discounts index
+  # Then I see a link to create a new discount
+  # When I click this link
+  # Then I am taken to a new page where I see a form to add a new bulk discount
+  # When I fill in the form with valid data
+  # Then I am redirected back to the bulk discount index
+  # And I see my new bulk discount listed
+  it 'There is a link to create a new discount, when clicked, directs to form page, fill in with good information and submit' do
+    expect(page).to have_link('Create Discount')
+
+    click_link('Create New Discount')
+
+    expect(current_path).to eq("/merchants/#{@merchant1.id}/bulk_discounts/new")
+    
+    fill_in 'Percentage', with: 30
+    fill_in 'Threshold', with: 20
+    click_button 'Submit'
+
+    expect(current_path).to eq(merchant_bulk_discounts_path(@merchant1))
+    expect(page).to have_content('30% off 20 items')
+  end
+  
 end
