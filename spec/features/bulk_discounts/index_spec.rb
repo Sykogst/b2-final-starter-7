@@ -66,11 +66,11 @@ describe "bulk discounts index" do
   # And each bulk discount listed includes a link to its show page
   it 'They see all bulk discounts including percentage, quantity thresholds, no discounts from other merchants' do
     within "#discount-#{@discount_1.id}" do
-      expect(page).to have_content("10% off 5 items")
+      expect(page).to have_content('10% off 5 items')
     end
 
     within "#discount-#{@discount_2.id}" do
-      expect(page).to have_content("20% off 10 items")
+      expect(page).to have_content('20% off 10 items')
     end
 
     expect(page).to_not have_css("#discount-#{@discount_3.id}")
@@ -78,12 +78,12 @@ describe "bulk discounts index" do
 
   it 'Each discount is a link to its show page, when clicked directs to proper show page' do
     within "#discount-#{@discount_1.id}" do
-      expect(page).to have_link("10% off 5 items")
+      expect(page).to have_link('10% off 5 items')
     end
 
     within "#discount-#{@discount_2.id}" do
-      expect(page).to have_link("20% off 10 items")
-      click_link("20% off 10 items")
+      expect(page).to have_link('20% off 10 items')
+      click_link('20% off 10 items')
     end
 
     expect(current_path).to eq("/merchants/#{@merchant1.id}/bulk_discounts/#{@discount_2.id}")
@@ -130,7 +130,7 @@ describe "bulk discounts index" do
     click_button 'Submit'
 
     expect(current_path).to eq(new_merchant_bulk_discount_path(@merchant1))
-    expect(page).to have_content("Percentage is not a number, Quantity threshold is not a number")
+    expect(page).to have_content('Percentage is not a number, Quantity threshold is not a number')
   end
 
   it 'Create new discount, sad path: negative numbers' do
@@ -141,7 +141,7 @@ describe "bulk discounts index" do
     click_button 'Submit'
 
     expect(current_path).to eq(new_merchant_bulk_discount_path(@merchant1))
-    expect(page).to have_content("Percentage must be greater than or equal to 0, Quantity threshold must be greater than or equal to 0")
+    expect(page).to have_content('Percentage must be greater than or equal to 0, Quantity threshold must be greater than or equal to 0')
   end
 
   # Percentage does not actually HAVE to be, just decided to make it a requirement for simplicity
@@ -153,7 +153,7 @@ describe "bulk discounts index" do
     click_button 'Submit'
 
     expect(current_path).to eq(new_merchant_bulk_discount_path(@merchant1))
-    expect(page).to have_content("Percentage must be an integer, Quantity threshold must be an integer")
+    expect(page).to have_content('Percentage must be an integer, Quantity threshold must be an integer')
   end
 
   # 3: Merchant Bulk Discount Delete
@@ -174,7 +174,22 @@ describe "bulk discounts index" do
     end
 
     expect(current_path).to eq(merchant_bulk_discounts_path(@merchant1))
+    expect(page).to have_content('Successfully deleted discount')
     expect(page).to_not have_css("#discount-#{@discount_2.id}")
     expect(page).to_not have_content("20% off 10 items")
   end
+
+  it 'Has a flash message for unsuccessful delete of something' do
+    allow(BulkDiscount).to receive(:find).with(@discount_2.id.to_s).and_return(@discount_2)
+    allow(@discount_2).to receive(:destroy).and_return(false)
+    within "#discount-#{@discount_2.id}" do
+      click_button('Delete')
+    end
+
+    expect(current_path).to eq(merchant_bulk_discounts_path(@merchant1))
+    expect(page).to have_content('Failed to delete discount')
+    expect(page).to have_content('10% off 5 items')
+    expect(page).to have_content('20% off 10 items')
+  end
+
 end
