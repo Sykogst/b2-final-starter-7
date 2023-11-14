@@ -126,9 +126,6 @@ RSpec.describe "invoices show" do
       @ii_11 = InvoiceItem.create!(invoice_id: @invoice_1.id, item_id: @item_8.id, quantity: 12, unit_price: 6, status: 1)
 
       @transaction1 = Transaction.create!(credit_card_number: 203942, result: 1, invoice_id: @invoice_1.id)
-
-      @discount_1 = BulkDiscount.create!(percentage: 50, quantity_threshold: 10, merchant_id: @merchant1.id)
-      visit merchant_invoice_path(@merchant1, @invoice_1)
     end
 
     # 6: Merchant Invoice Show Page: Total Revenue and Discounted Revenue
@@ -137,7 +134,9 @@ RSpec.describe "invoices show" do
     # Then I see the total revenue for my merchant from this invoice (not including discounts)
     # And I see the total discounted revenue for my merchant from this invoice which includes bulk discounts in the calculation
     it 'Shows total revenue and discount revenue for invoice' do
-      save_and_open_page
+      @discount_1 = BulkDiscount.create!(percentage: 50, quantity_threshold: 10, merchant_id: @merchant1.id)
+      visit merchant_invoice_path(@merchant1, @invoice_1)
+
       expect(page).to have_content('Total Revenue: $162.0')
       expect(page).to have_content('Discount Revenue: $126.0')
     end
@@ -148,20 +147,26 @@ RSpec.describe "invoices show" do
     # Next to each invoice item I see a link to the show page for the bulk discount that was applied (if any)
     it 'Has a link next to each item to the show page of the bulk discount applied' do
       @ii_111 = InvoiceItem.create!(invoice_id: @invoice_1.id, item_id: @item_2.id, quantity: 5, unit_price: 6, status: 1)
+      @discount_1 = BulkDiscount.create!(percentage: 50, quantity_threshold: 10, merchant_id: @merchant1.id)
       @discount_2 = BulkDiscount.create!(percentage: 25, quantity_threshold: 9, merchant_id: @merchant1.id)
+      visit merchant_invoice_path(@merchant1, @invoice_1)
 
-      within "#itemDisc-#{@item_1.id}" do
-        expect(page).to have_link("25% off 9 items")
+      within "#itemDisc-#{@ii_111.id}" do
+        expect(page).to_not have_content('25% off 9 items')
+        expect(page).to_not have_content('50% off 10 items')
       end
 
-      within "#itemDisc-#{@item_2.id}" do
-        expect(page).to_not have_link("25% off 9 items")
-        expect(page).to_not have_link("50% off 10 items")
-      end
+      within "#itemDisc-#{@ii_1.id}" do
+        click_link( "#{@discount_2.percentage}% off #{@discount_2.quantity_threshold} items")
+      end 
+      expect(current_path).to eq(merchant_bulk_discount_path(@merchant1, @discount_2))
 
-      within "#itemDisc-#{@item_8.id}" do
-        expect(page).to_not have_link("50% off 10 items")
+      visit merchant_invoice_path(@merchant1, @invoice_1)
+      
+      within "#itemDisc-#{@ii_11.id}" do
+        click_link("#{@discount_1.percentage}% off #{@discount_1.quantity_threshold} items")
       end
+      expect(current_path).to eq(merchant_bulk_discount_path(@merchant1, @discount_1))
     end
   end
 

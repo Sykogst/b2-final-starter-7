@@ -44,11 +44,10 @@
                 <%= f.submit 'Update Invoice' %>
               <% end %>
             </td>
-            <td style="text-align:center">
-              <%= link_to "#{i.discount_applied.percentage}% off #{i.discount_applied.quantity_threshold items}",
-                  merchant_bulk_discount_path(@merchant.id, i.discount_applied.id),
-                  id="itemDisc-#{i.id}" 
-              %>
+            <td id="itemDisc-<%= i.id %>">
+              <% if i.discount_applied %>
+                <%= link_to "#{i.discount_applied.percentage}% off #{i.discount_applied.quantity_threshold} items", merchant_bulk_discount_path(@merchant, i.discount_applied) %>
+              <% end %>
             </td>
           </tr>
         </section>
