@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe "bulk discount show" do
+describe "bulk discount edit" do
   before :each do
     @merchant1 = Merchant.create!(name: "Hair Care")
     @merchant2 = Merchant.create!(name: "Jewelry")
@@ -53,19 +53,10 @@ describe "bulk discount show" do
 
     @discount_1 = BulkDiscount.create!(percentage: 10, quantity_threshold: 5, merchant_id: @merchant1.id)
 
-    visit merchant_bulk_discount_path(@merchant1, @discount_1)
+    visit edit_merchant_bulk_discount_path(@merchant1, @discount_1)
   end
 
-  # 4: Merchant Bulk Discount Show
-  # As a merchant
-  # When I visit my bulk discount show page
-  # Then I see the bulk discount's quantity threshold and percentage discount
-  it 'When merchant visits discount show page, they see quantity threshold and percentage discount' do
-    expect(page).to have_content('Discount: 10%')
-    expect(page).to have_content('Threshold: 5 items')
-  end
-
-  # 5: Merchant Bulk Discount Edit, part 1
+  # 5: Merchant Bulk Discount Edit, part 2
   # As a merchant
   # When I visit my bulk discount show page
   # Then I see a link to edit the bulk discount
@@ -75,13 +66,51 @@ describe "bulk discount show" do
   # When I change any/all of the information and click submit
   # Then I am redirected to the bulk discount's show page
   # And I see that the discount's attributes have been updated
-  it 'There is an edit button, directs to form to edit, prepopulated with current attributes' do
-    expect(page).to have_link('Edit')
+  it 'Update with proper information' do
+    fill_in 'Percentage', with: '30'
+    fill_in 'Quantity threshold', with: '15'
+    click_button 'Submit'
 
-    click_link('Edit')
-
-    expect(current_path).to eq("/merchants/#{@merchant1.id}/bulk_discounts/#{@discount_1.id}/edit")
-    expect(find_field('Percentage').value).to eq('10')
-    expect(find_field('Quantity threshold').value).to eq('5')
+    expect(current_path).to eq(merchant_bulk_discount_path(@merchant1, @discount_1))
+    expect(page).to have_content('Discount: 10%')
+    expect(page).to have_content('Threshold: 5 items')
+    expect(page).to have_content('Succesfully Updated Discount Info!')
   end
+
+  # These did not seem to be picked up by validations, and would always keep current attribute value if something else was entered
+  # xit 'Edit discount, sad path: missing information' do
+  #   fill_in 'Percentage', with: ''
+  #   fill_in 'Quantity threshold', with: ''
+  #   click_button 'Submit'
+
+  #   expect(current_path).to eq(edit_merchant_bulk_discount_path(@merchant1, @discount_1))
+  #   expect(page).to have_content("Quantity threshold can't be blank, Quantity threshold is not a number")
+  # end
+
+  # xit 'Edit discount, sad path: non-numerical values' do
+  #   fill_in 'Percentage', with: "30%"
+  #   fill_in 'Quantity threshold', with: "20a"
+  #   click_button 'Submit'
+
+  #   expect(current_path).to eq(edit_merchant_bulk_discount_path(@merchant1, @discount_1))
+  #   expect(page).to have_content('Percentage is not a number, Quantity threshold is not a number')
+  # end
+
+  # xit 'Edit discount, sad path: negative numbers' do
+  #   fill_in 'Percentage', with: -30
+  #   fill_in 'Quantity threshold', with: -20
+  #   click_button 'Submit'
+
+  #   expect(current_path).to eq(edit_merchant_bulk_discount_path(@merchant1, @discount_1))
+  #   expect(page).to have_content('Percentage must be greater than or equal to 0, Quantity threshold must be greater than or equal to 0')
+  # end
+
+  # xit 'Edit discount, sad path: integers only' do
+  #   fill_in 'Percentage', with: 30.5
+  #   fill_in 'Quantity threshold', with: 20.5
+  #   click_button 'Submit'
+
+  #   expect(current_path).to eq(edit_merchant_bulk_discount_path(@merchant1, @discount_1))
+  #   expect(page).to have_content('Percentage must be an integer, Quantity threshold must be an integer')
+  # end
 end

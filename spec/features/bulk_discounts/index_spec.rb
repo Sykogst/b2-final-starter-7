@@ -111,6 +111,7 @@ describe "bulk discounts index" do
     
     expect(current_path).to eq(merchant_bulk_discounts_path(@merchant1))
     expect(page).to have_content('30% off 20 items')
+    expect(page).to have_content('Succesfully Added Discount!')
   end
 
   it 'Create new discount, sad path: missing information' do
