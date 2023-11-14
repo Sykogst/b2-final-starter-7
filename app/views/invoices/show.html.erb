@@ -27,6 +27,7 @@
         <th class="th1">Quantity</th>
         <th class="th1">Unit Price</th>
         <th class="th1">Status</th>
+        <th class="th1">Discount Applied</th>
       </tr>
     </thead>
 
@@ -42,7 +43,13 @@
                 <%= f.select :status, Invoice.statuses.keys, selected: "#{@invoice.status}" %>
                 <%= f.submit 'Update Invoice' %>
               <% end %>
-              </td>
+            </td>
+            <td style="text-align:center">
+              <%= link_to "#{i.discount_applied.percentage}% off #{i.discount_applied.quantity_threshold items}",
+                  merchant_bulk_discount_path(@merchant.id, i.discount_applied.id),
+                  id="itemDisc-#{i.id}" 
+              %>
+            </td>
           </tr>
         </section>
       <% end %>
