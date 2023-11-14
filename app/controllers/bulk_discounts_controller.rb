@@ -15,6 +15,7 @@ class BulkDiscountsController < ApplicationController
   def create
     new_discount = BulkDiscount.new(bulk_discount_params)
     if new_discount.save
+      flash[:notice] = 'Succesfully Added Discount!'
       redirect_to merchant_bulk_discounts_path(@merchant)
     else
       flash[:alert] = error_message(new_discount.errors)
