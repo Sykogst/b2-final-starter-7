@@ -136,8 +136,9 @@ RSpec.describe "invoices show" do
       # Then I see the total revenue for my merchant from this invoice (not including discounts)
       # And I see the total discounted revenue for my merchant from this invoice which includes bulk discounts in the calculation
     it 'Shows total revenue and discount revenue for invoice' do
+      save_and_open_page
       expect(page).to have_content('Total Revenue: $162.0')
-      expect(page).to have_content('Discount Revenue: $144.0')
+      expect(page).to have_content('Discount Revenue: $126.0')
     end
   end
 

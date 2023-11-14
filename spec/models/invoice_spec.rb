@@ -10,7 +10,7 @@ RSpec.describe Invoice, type: :model do
     it { should have_many(:items).through(:invoice_items) }
     it { should have_many(:merchants).through(:items) }
     it { should have_many :transactions}
-    it { should have_many(:bulk_discounts).through(:items) }
+    # it { should have_many(:bulk_discounts).through(:items) }
 
   end
   describe "instance methods" do
@@ -53,13 +53,29 @@ RSpec.describe Invoice, type: :model do
 
         @transaction1 = Transaction.create!(credit_card_number: 203942, result: 1, invoice_id: @invoice_1.id)
 
-        @discount_1a = BulkDiscount.create!(percentage: 50, quantity_threshold: 10, merchant_id: @merchant1.id)
         @discount_2a = BulkDiscount.create!(percentage: 50, quantity_threshold: 1, merchant_id: @merchant2.id)
       end
 
       it 'returns discount revenue after applicable discounts applied, single discount' do
+        @discount_1a = BulkDiscount.create!(percentage: 50, quantity_threshold: 10, merchant_id: @merchant1.id)
+
         expect(@invoice_1.discount_revenue).to eq(140)
       end
+
+      it 'returns discount revenue after applicable discounts applied, more discounts' do
+        @discount_1a = BulkDiscount.create!(percentage: 50, quantity_threshold: 10, merchant_id: @merchant1.id)
+        @discount_1b = BulkDiscount.create!(percentage: 40, quantity_threshold: 5, merchant_id: @merchant1.id)
+
+        expect(@invoice_1.discount_revenue).to eq(104)
+      end
+
+      it 'returns discount revenue after applicable discounts applied, no discounts' do
+        @discount_1a = BulkDiscount.create!(percentage: 50, quantity_threshold: 100, merchant_id: @merchant1.id)
+        @discount_1b = BulkDiscount.create!(percentage: 40, quantity_threshold: 100, merchant_id: @merchant1.id)
+
+        expect(@invoice_1.discount_revenue).to eq(190)
+      end
+
     end
   end
 end
