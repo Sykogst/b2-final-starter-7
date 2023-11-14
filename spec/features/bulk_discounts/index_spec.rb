@@ -113,7 +113,7 @@ describe "bulk discounts index" do
     expect(page).to have_content('30% off 20 items')
   end
 
-  it 'Create new discount, missing information before submit' do
+  it 'Create new discount, sad path: missing information' do
     click_link('Create New Discount')    
     fill_in 'Percentage', with: 30
     click_button 'Submit'
@@ -156,4 +156,25 @@ describe "bulk discounts index" do
     expect(page).to have_content("Percentage must be an integer, Quantity threshold must be an integer")
   end
 
+  # 3: Merchant Bulk Discount Delete
+  # As a merchant
+  # When I visit my bulk discounts index
+  # Then next to each bulk discount I see a button to delete it
+  # When I click this button
+  # Then I am redirected back to the bulk discounts index page
+  # And I no longer see the discount listed
+  it 'There is delete button next to each discount, click, redirects back, discount is gone' do
+    within "#discount-#{@discount_1.id}" do
+      expect(page).to have_button('Delete')
+    end
+
+    within "#discount-#{@discount_2.id}" do
+      expect(page).to have_button('Delete')
+      click_button('Delete')
+    end
+
+    expect(current_path).to eq(merchant_bulk_discounts_path(@merchant1))
+    expect(page).to_not have_css("#discount-#{@discount_2.id}")
+    expect(page).to_not have_content("20% off 10 items")
+  end
 end
