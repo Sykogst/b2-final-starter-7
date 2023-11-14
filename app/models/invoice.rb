@@ -16,6 +16,7 @@ class Invoice < ApplicationRecord
   end
 
   def discount_revenue
+    require 'pry'; binding.pry
     InvoiceItems.joins()
   end
 end

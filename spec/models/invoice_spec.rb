@@ -53,8 +53,8 @@ RSpec.describe Invoice, type: :model do
 
         @transaction1 = Transaction.create!(credit_card_number: 203942, result: 1, invoice_id: @invoice_1.id)
 
-        @discount_1a = Discount.create!(percentage: 50, quantity_threshold: 10, merchant_id: @merchant1.id)
-        @discount_2a = Discount.create!(percentage: 50, quantity_threshold: 1, merchant_id: @merchant2.id)
+        @discount_1a = BulkDiscount.create!(percentage: 50, quantity_threshold: 10, merchant_id: @merchant1.id)
+        @discount_2a = BulkDiscount.create!(percentage: 50, quantity_threshold: 1, merchant_id: @merchant2.id)
       end
 
       it 'returns discount revenue after applicable discounts applied, single discount' do

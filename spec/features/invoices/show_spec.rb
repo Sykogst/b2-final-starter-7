@@ -126,7 +126,7 @@ RSpec.describe "invoices show" do
 
       @transaction1 = Transaction.create!(credit_card_number: 203942, result: 1, invoice_id: @invoice_1.id)
 
-      @discount_1 = Discount.create!(percentage: 50, quantity_threshold: 10, merchant_id: @merchant1.id)
+      @discount_1 = BulkDiscount.create!(percentage: 50, quantity_threshold: 10, merchant_id: @merchant1.id)
       visit merchant_invoice_path(@merchant1, @invoice_1)
     end
 
