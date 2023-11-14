@@ -76,4 +76,6 @@ describe "bulk discount edit" do
     expect(page).to have_content('Threshold: 5 items')
     expect(page).to have_content('Succesfully Updated Discount Info!')
   end
+
+  
 end
