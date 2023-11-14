@@ -76,11 +76,11 @@ describe "bulk discount show" do
   # Then I am redirected to the bulk discount's show page
   # And I see that the discount's attributes have been updated
   it 'There is an edit button, directs to form to edit, prepopulated with current attributes' do
-    expect(page).to have_content('Edit')
+    expect(page).to have_link('Edit')
 
-    click_button('Edit')
+    click_link('Edit')
 
-    expect(current_path).to eq(edit_merchant_bulk_discount(@merchant1, @discount_1))
+    expect(current_path).to eq("/merchants/#{@merchant1.id}/bulk_discounts/#{@discount_1.id}/edit")
     expect(find_field('Percentage').value).to eq('10')
     expect(find_field('Quantity threshold').value).to eq('5')
   end
