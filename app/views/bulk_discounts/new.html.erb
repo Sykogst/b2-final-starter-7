@@ -1,3 +1,5 @@
+<%= render partial: "shared/nav" %>
+
 <%= form_with method: :post, url: merchant_bulk_discounts_path(@merchant), local: true do |f| %>
   <%= f.label :percentage %>
   <%= f.text_field :percentage %><br/><br/>
