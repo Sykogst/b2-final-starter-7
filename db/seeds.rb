@@ -7,3 +7,5 @@
 #   Character.create(name: "Luke", movie: movies.first)
 
 Rake::Task["csv_load:all"].invoke
+
+discount_1a = BulkDiscount.create!(percentage: 50, quantity_threshold: 10, merchant_id: 1)
