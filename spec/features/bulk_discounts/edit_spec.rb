@@ -72,45 +72,46 @@ describe "bulk discount edit" do
     click_button 'Submit'
 
     expect(current_path).to eq(merchant_bulk_discount_path(@merchant1, @discount_1))
-    expect(page).to have_content('Discount: 10%')
-    expect(page).to have_content('Threshold: 5 items')
+    expect(page).to have_content('Discount: 30%')
+    expect(page).to have_content('Threshold: 15 items')
     expect(page).to have_content('Succesfully Updated Discount Info!')
   end
 
   # These did not seem to be picked up by validations, and would always keep current attribute value if something else was entered
-  # xit 'Edit discount, sad path: missing information' do
-  #   fill_in 'Percentage', with: ''
-  #   fill_in 'Quantity threshold', with: ''
-  #   click_button 'Submit'
+  # Used a simple message 
+  it 'Edit discount, sad path: missing information, attributes stay same' do
+    fill_in 'Percentage', with: ''
+    fill_in 'Quantity threshold', with: ''
+    click_button 'Submit'
 
-  #   expect(current_path).to eq(edit_merchant_bulk_discount_path(@merchant1, @discount_1))
-  #   expect(page).to have_content("Quantity threshold can't be blank, Quantity threshold is not a number")
-  # end
+    expect(current_path).to eq(edit_merchant_bulk_discount_path(@merchant1, @discount_1))
+    expect(page).to have_content("Percentage can't be blank, Quantity threshold can't be blank, Percentage is not a number, Quantity threshold is not a number")
+  end
 
-  # xit 'Edit discount, sad path: non-numerical values' do
-  #   fill_in 'Percentage', with: "30%"
-  #   fill_in 'Quantity threshold', with: "20a"
-  #   click_button 'Submit'
+  it 'Edit discount, sad path: non-numerical values, one field u' do
+    fill_in 'Percentage', with: "30%"
+    fill_in 'Quantity threshold', with: "25!"
+    click_button 'Submit'
 
-  #   expect(current_path).to eq(edit_merchant_bulk_discount_path(@merchant1, @discount_1))
-  #   expect(page).to have_content('Percentage is not a number, Quantity threshold is not a number')
-  # end
+    expect(current_path).to eq(edit_merchant_bulk_discount_path(@merchant1, @discount_1))
+    expect(page).to have_content("Percentage is not a number, Quantity threshold is not a number")
+  end
 
-  # xit 'Edit discount, sad path: negative numbers' do
-  #   fill_in 'Percentage', with: -30
-  #   fill_in 'Quantity threshold', with: -20
-  #   click_button 'Submit'
+  it 'Edit discount, sad path: negative numbers' do
+    fill_in 'Percentage', with: -30
+    fill_in 'Quantity threshold', with: -20
+    click_button 'Submit'
 
-  #   expect(current_path).to eq(edit_merchant_bulk_discount_path(@merchant1, @discount_1))
-  #   expect(page).to have_content('Percentage must be greater than or equal to 0, Quantity threshold must be greater than or equal to 0')
-  # end
+    expect(current_path).to eq(edit_merchant_bulk_discount_path(@merchant1, @discount_1))
+    expect(page).to have_content("Percentage must be greater than or equal to 0, Quantity threshold must be greater than or equal to 0")
+  end
 
-  # xit 'Edit discount, sad path: integers only' do
-  #   fill_in 'Percentage', with: 30.5
-  #   fill_in 'Quantity threshold', with: 20.5
-  #   click_button 'Submit'
+  it 'Edit discount, sad path: integers only' do
+    fill_in 'Percentage', with: 30.5
+    fill_in 'Quantity threshold', with: 20.5
+    click_button 'Submit'
 
-  #   expect(current_path).to eq(edit_merchant_bulk_discount_path(@merchant1, @discount_1))
-  #   expect(page).to have_content('Percentage must be an integer, Quantity threshold must be an integer')
-  # end
+    expect(current_path).to eq(edit_merchant_bulk_discount_path(@merchant1, @discount_1))
+    expect(page).to have_content("Percentage must be an integer, Quantity threshold must be an integer")
+  end
 end
